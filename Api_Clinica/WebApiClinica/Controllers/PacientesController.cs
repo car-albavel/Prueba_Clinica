@@ -68,7 +68,7 @@ namespace WebApiClinica.Controllers
                     DataRow row = ds.Tables[0].Rows[0];
                     var paciente = new Paciente
                     {
-                        IdPaciente = Convert.ToInt32(row["IdPaciente"]),
+                        IdPaciente = Convert.ToInt32(row["PacienteID"]),
                         TipoDocumento = row["TipoDocumento"].ToString() ?? string.Empty,
                         NumeroDocumento = row["NumeroDocumento"].ToString() ?? string.Empty,
                         NombrePaciente = row["Nombre"].ToString() ?? string.Empty,
