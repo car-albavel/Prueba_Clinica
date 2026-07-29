@@ -1,0 +1,142 @@
+<div class="pacientes-container">
+  <h1>Gestión de Pacientes</h1>
+
+  <div class="alert alert-success" *ngIf="mensaje">{{ mensaje }}</div>
+  <div class="alert alert-error" *ngIf="error">{{ error }}</div>
+
+  <form class="form-paciente" [formGroup]="form" (ngSubmit)="guardar()">
+    <h2>{{ editando ? 'Editar Paciente' : 'Nuevo Paciente' }}</h2>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="tipoDocumento">Tipo de documento</label>
+        <select id="tipoDocumento" formControlName="tipoDocumento">
+          <option value="">Seleccione...</option>
+          <option value="CC">Cédula de ciudadanía (CC)</option>
+          <option value="TI">Tarjeta de identidad (TI)</option>
+          <option value="CE">Cédula de extranjería (CE)</option>
+          <option value="PA">Pasaporte (PA)</option>
+        </select>
+        <small class="error-text" *ngIf="form.get('tipoDocumento')?.invalid && form.get('tipoDocumento')?.touched">
+          El tipo de documento es requerido
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="numeroDocumento">Número de documento</label>
+        <input id="numeroDocumento" type="text" formControlName="numeroDocumento" />
+        <small class="error-text" *ngIf="form.get('numeroDocumento')?.invalid && form.get('numeroDocumento')?.touched">
+          El número de documento es requerido
+        </small>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="nombrePaciente">Nombre del paciente</label>
+        <input id="nombrePaciente" type="text" formControlName="nombrePaciente" />
+        <small class="error-text" *ngIf="form.get('nombrePaciente')?.invalid && form.get('nombrePaciente')?.touched">
+          El nombre del paciente es requerido
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="fechaNacimiento">Fecha de nacimiento</label>
+        <input id="fechaNacimiento" type="date" formControlName="fechaNacimiento" />
+        <small class="error-text" *ngIf="form.get('fechaNacimiento')?.invalid && form.get('fechaNacimiento')?.touched">
+          La fecha de nacimiento es requerida
+        </small>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="correoElectronico">Correo electrónico</label>
+        <input id="correoElectronico" type="email" formControlName="correoElectronico" />
+        <small class="error-text" *ngIf="form.get('correoElectronico')?.invalid && form.get('correoElectronico')?.touched">
+          El correo electrónico no es válido
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="genero">Género</label>
+        <select id="genero" formControlName="genero">
+          <option value="">Seleccione...</option>
+          <option value="M">Masculino</option>
+          <option value="F">Femenino</option>
+          <option value="Otro">Otro</option>
+        </select>
+        <small class="error-text" *ngIf="form.get('genero')?.invalid && form.get('genero')?.touched">
+          El género es requerido
+        </small>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="direccion">Dirección</label>
+        <input id="direccion" type="text" formControlName="direccion" />
+      </div>
+
+      <div class="form-group">
+        <label for="numeroTelefono">Número de teléfono</label>
+        <input id="numeroTelefono" type="text" formControlName="numeroTelefono" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group form-check">
+        <label>
+          <input type="checkbox" formControlName="activo" />
+          Activo
+        </label>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary">{{ editando ? 'Actualizar' : 'Guardar' }}</button>
+      <button type="button" class="btn btn-secondary" *ngIf="editando" (click)="cancelar()">Cancelar</button>
+    </div>
+  </form>
+
+  <h2>Lista de Pacientes</h2>
+
+  <p *ngIf="cargando">Cargando pacientes...</p>
+
+  <table class="tabla-pacientes" *ngIf="!cargando">
+    <thead>
+      <tr>
+        <th>Tipo Doc.</th>
+        <th>Número Doc.</th>
+        <th>Nombre</th>
+        <th>Fecha Nacimiento</th>
+        <th>Correo</th>
+        <th>Género</th>
+        <th>Dirección</th>
+        <th>Teléfono</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let paciente of pacientes">
+        <td>{{ paciente.tipoDocumento }}</td>
+        <td>{{ paciente.numeroDocumento }}</td>
+        <td>{{ paciente.nombrePaciente }}</td>
+        <td>{{ paciente.fechaNacimiento | date:'dd/MM/yyyy' }}</td>
+        <td>{{ paciente.correoElectronico }}</td>
+        <td>{{ paciente.genero }}</td>
+        <td>{{ paciente.direccion }}</td>
+        <td>{{ paciente.numeroTelefono }}</td>
+        <td>{{ paciente.activo ? 'Activo' : 'Inactivo' }}</td>
+        <td>
+          <button class="btn btn-edit" (click)="editar(paciente)">Editar</button>
+          <button class="btn btn-delete" (click)="eliminar(paciente.idPaciente)">Eliminar</button>
+        </td>
+      </tr>
+      <tr *ngIf="pacientes.length === 0">
+        <td colspan="10">No hay pacientes registrados</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
