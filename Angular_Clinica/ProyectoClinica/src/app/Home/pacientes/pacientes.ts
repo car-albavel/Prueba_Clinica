@@ -99,12 +99,12 @@ export class Pacientes implements OnInit {
     this.mensaje.set('');
     this.error.set('');
     this.form.patchValue({
-      tipoDocumento: paciente.tipoDocumento,
+      tipoDocumento: paciente.tipoDocumento?.trim(),
       numeroDocumento: paciente.numeroDocumento,
       nombrePaciente: paciente.nombrePaciente,
       fechaNacimiento: paciente.fechaNacimiento?.substring(0, 10),
       correoElectronico: paciente.correoElectronico,
-      genero: paciente.genero,
+      genero: paciente.genero?.trim(),
       direccion: paciente.direccion,
       numeroTelefono: paciente.numeroTelefono,
       activo: paciente.activo
