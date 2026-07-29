@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -14,13 +14,13 @@ import { PeticionPaciente } from '../../Models/peticion-paciente';
 })
 export class Pacientes implements OnInit {
 
-  pacientes: RespuestaPaciente[] = [];
+  pacientes = signal<RespuestaPaciente[]>([]);
   form: FormGroup;
-  editando: boolean = false;
+  editando = signal<boolean>(false);
   idEditando: number | null = null;
-  mensaje: string = '';
-  error: string = '';
-  cargando: boolean = false;
+  mensaje = signal<string>('');
+  error = signal<string>('');
+  cargando = signal<boolean>(false);
 
   constructor(private _service: Services, private _fb: FormBuilder) {
     this.form = this._fb.group({
@@ -41,15 +41,15 @@ export class Pacientes implements OnInit {
   }
 
   cargarPacientes(): void {
-    this.cargando = true;
+    this.cargando.set(true);
     this._service.getPacientes().subscribe({
       next: (data) => {
-        this.pacientes = data;
-        this.cargando = false;
+        this.pacientes.set(data);
+        this.cargando.set(false);
       },
       error: (err) => {
-        this.error = 'Error al cargar los pacientes';
-        this.cargando = false;
+        this.error.set('Error al cargar los pacientes');
+        this.cargando.set(false);
         console.error(err);
       }
     });
@@ -61,32 +61,32 @@ export class Pacientes implements OnInit {
       return;
     }
 
-    this.mensaje = '';
-    this.error = '';
+    this.mensaje.set('');
+    this.error.set('');
     const paciente: PeticionPaciente = this.form.value;
 
-    if (this.editando && this.idEditando !== null) {
+    if (this.editando() && this.idEditando !== null) {
       paciente.idPaciente = this.idEditando;
       this._service.editPaciente(this.idEditando, paciente).subscribe({
         next: () => {
-          this.mensaje = 'Paciente actualizado exitosamente';
+          this.mensaje.set('Paciente actualizado exitosamente');
           this.cancelar();
           this.cargarPacientes();
         },
         error: (err) => {
-          this.error = err.error?.mensaje || 'Error al actualizar el paciente';
+          this.error.set(err.error?.mensaje || 'Error al actualizar el paciente');
           console.error(err);
         }
       });
     } else {
       this._service.addPaciente(paciente).subscribe({
         next: () => {
-          this.mensaje = 'Paciente creado exitosamente';
+          this.mensaje.set('Paciente creado exitosamente');
           this.cancelar();
           this.cargarPacientes();
         },
         error: (err) => {
-          this.error = err.error?.mensaje || 'Error al crear el paciente';
+          this.error.set(err.error?.mensaje || 'Error al crear el paciente');
           console.error(err);
         }
       });
@@ -94,10 +94,10 @@ export class Pacientes implements OnInit {
   }
 
   editar(paciente: RespuestaPaciente): void {
-    this.editando = true;
+    this.editando.set(true);
     this.idEditando = paciente.idPaciente;
-    this.mensaje = '';
-    this.error = '';
+    this.mensaje.set('');
+    this.error.set('');
     this.form.patchValue({
       tipoDocumento: paciente.tipoDocumento,
       numeroDocumento: paciente.numeroDocumento,
@@ -116,18 +116,18 @@ export class Pacientes implements OnInit {
 
     this._service.deletePaciente(id).subscribe({
       next: () => {
-        this.mensaje = 'Paciente eliminado exitosamente';
+        this.mensaje.set('Paciente eliminado exitosamente');
         this.cargarPacientes();
       },
       error: (err) => {
-        this.error = 'Error al eliminar el paciente';
+        this.error.set('Error al eliminar el paciente');
         console.error(err);
       }
     });
   }
 
   cancelar(): void {
-    this.editando = false;
+    this.editando.set(false);
     this.idEditando = null;
     this.form.reset({ activo: true });
   }

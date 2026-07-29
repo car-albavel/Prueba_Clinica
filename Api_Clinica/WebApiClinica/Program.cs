@@ -22,6 +22,9 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+// Habilitar CORS - ANTES de cualquier otro middleware
+app.UseCors("AllowAngular");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -29,10 +32,11 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-// Habilitar CORS
-app.UseCors("AllowAngular");
-
-app.UseHttpsRedirection();
+// Solo usar HTTPS redirection en producción
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthorization();
 
