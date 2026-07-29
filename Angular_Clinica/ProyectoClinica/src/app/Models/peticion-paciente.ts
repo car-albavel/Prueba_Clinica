@@ -1,6 +1,6 @@
-export interface RespuestaPaciente 
+export interface PeticionPaciente
 {
-    idPaciente: number;
+    idPaciente?: number;
     tipoDocumento: string;
     numeroDocumento: string;
     nombrePaciente: string;
@@ -10,5 +10,4 @@ export interface RespuestaPaciente
     direccion: string;
     numeroTelefono: string;
     activo: boolean;
-
 }
